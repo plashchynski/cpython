@@ -871,7 +871,7 @@ binascii_hexlify_impl(PyObject *module, Py_buffer *data, PyObject *sep,
 /*[clinic input]
 binascii.a2b_hex
 
-    hexstr: ascii_buffer
+    hexstr: object
     /
 
 Binary data of hexadecimal representation.
@@ -881,58 +881,17 @@ This function is also available as "unhexlify()".
 [clinic start generated code]*/
 
 static PyObject *
-binascii_a2b_hex_impl(PyObject *module, Py_buffer *hexstr)
-/*[clinic end generated code: output=0cc1a139af0eeecb input=9e1e7f2f94db24fd]*/
+binascii_a2b_hex(PyObject *module, PyObject *hexstr)
+/*[clinic end generated code: output=6c7c03524380fc43 input=da849a2fb3d639e1]*/
 {
-    const char* argbuf;
-    Py_ssize_t arglen;
+    // puts("binascii_a2b_hex");
     PyObject *retval;
     char* retbuf;
-    Py_ssize_t i, j;
-    binascii_state *state;
 
-    argbuf = hexstr->buf;
-    arglen = hexstr->len;
-
-    assert(arglen >= 0);
-
-    /* XXX What should we do about strings with an odd length?  Should
-     * we add an implicit leading zero, or a trailing zero?  For now,
-     * raise an exception.
-     */
-    if (arglen % 2) {
-        state = get_binascii_state(module);
-        if (state == NULL) {
-            return NULL;
-        }
-        PyErr_SetString(state->Error, "Odd-length string");
-        return NULL;
-    }
-
-    retval = PyBytes_FromStringAndSize(NULL, (arglen/2));
-    if (!retval)
-        return NULL;
+    retval = PyBytes_FromStringAndSize(NULL, 1);
     retbuf = PyBytes_AS_STRING(retval);
-
-    for (i=j=0; i < arglen; i += 2) {
-        unsigned int top = _PyLong_DigitValue[Py_CHARMASK(argbuf[i])];
-        unsigned int bot = _PyLong_DigitValue[Py_CHARMASK(argbuf[i+1])];
-        if (top >= 16 || bot >= 16) {
-            state = get_binascii_state(module);
-            if (state == NULL) {
-                return NULL;
-            }
-            PyErr_SetString(state->Error,
-                            "Non-hexadecimal digit found");
-            goto finally;
-        }
-        retbuf[j++] = (top << 4) + bot;
-    }
+    retbuf[0] = 0;
     return retval;
-
-  finally:
-    Py_DECREF(retval);
-    return NULL;
 }
 
 /*[clinic input]
@@ -944,10 +903,10 @@ hexstr must contain an even number of hex digits (upper or lower case).
 [clinic start generated code]*/
 
 static PyObject *
-binascii_unhexlify_impl(PyObject *module, Py_buffer *hexstr)
-/*[clinic end generated code: output=51a64c06c79629e3 input=dd8c012725f462da]*/
+binascii_unhexlify(PyObject *module, PyObject *hexstr)
+/*[clinic end generated code: output=ccd84f3e66cc10a6 input=dd8c012725f462da]*/
 {
-    return binascii_a2b_hex_impl(module, hexstr);
+    return binascii_a2b_hex(module, hexstr);
 }
 
 #define MAXLINESIZE 76

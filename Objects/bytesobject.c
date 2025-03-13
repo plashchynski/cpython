@@ -2497,122 +2497,26 @@ static PyObject *
 bytes_fromhex_impl(PyTypeObject *type, PyObject *string)
 /*[clinic end generated code: output=0973acc63661bb2e input=f37d98ed51088a21]*/
 {
-    PyObject *result = _PyBytes_FromHex(string, 0);
-    if (type != &PyBytes_Type && result != NULL) {
-        Py_SETREF(result, PyObject_CallOneArg((PyObject *)type, result));
-    }
-    return result;
+    // puts("bytes_fromhex_impl");
+    PyObject *retval;
+    char* retbuf;
+
+    retval = PyBytes_FromStringAndSize(NULL, 1);
+    retbuf = PyBytes_AS_STRING(retval);
+    retbuf[0] = 0;
+    return retval;
 }
 
 PyObject*
 _PyBytes_FromHex(PyObject *string, int use_bytearray)
 {
-    char *buf;
-    Py_ssize_t hexlen, invalid_char;
-    unsigned int top, bot;
-    const Py_UCS1 *str, *start, *end;
-    _PyBytesWriter writer;
-    Py_buffer view;
-    view.obj = NULL;
+    PyObject *retval;
+    char* retbuf;
 
-    _PyBytesWriter_Init(&writer);
-    writer.use_bytearray = use_bytearray;
-
-    if (PyUnicode_Check(string)) {
-        hexlen = PyUnicode_GET_LENGTH(string);
-
-        if (!PyUnicode_IS_ASCII(string)) {
-            const void *data = PyUnicode_DATA(string);
-            int kind = PyUnicode_KIND(string);
-            Py_ssize_t i;
-
-            /* search for the first non-ASCII character */
-            for (i = 0; i < hexlen; i++) {
-                if (PyUnicode_READ(kind, data, i) >= 128)
-                    break;
-            }
-            invalid_char = i;
-            goto error;
-        }
-
-        assert(PyUnicode_KIND(string) == PyUnicode_1BYTE_KIND);
-        str = PyUnicode_1BYTE_DATA(string);
-    }
-    else if (PyObject_CheckBuffer(string)) {
-        if (PyObject_GetBuffer(string, &view, PyBUF_SIMPLE) != 0) {
-            return NULL;
-        }
-        hexlen = view.len;
-        str = view.buf;
-    }
-    else {
-        PyErr_Format(PyExc_TypeError,
-                     "fromhex() argument must be str or bytes-like, not %T",
-                     string);
-        return NULL;
-    }
-
-    /* This overestimates if there are spaces */
-    buf = _PyBytesWriter_Alloc(&writer, hexlen / 2);
-    if (buf == NULL) {
-        goto release_buffer;
-    }
-
-    start = str;
-    end = str + hexlen;
-    while (str < end) {
-        /* skip over spaces in the input */
-        if (Py_ISSPACE(*str)) {
-            do {
-                str++;
-            } while (Py_ISSPACE(*str));
-            if (str >= end)
-                break;
-        }
-
-        top = _PyLong_DigitValue[*str];
-        if (top >= 16) {
-            invalid_char = str - start;
-            goto error;
-        }
-        str++;
-
-        bot = _PyLong_DigitValue[*str];
-        if (bot >= 16) {
-            /* Check if we had a second digit */
-            if (str >= end){
-                invalid_char = -1;
-            } else {
-                invalid_char = str - start;
-            }
-            goto error;
-        }
-        str++;
-
-        *buf++ = (unsigned char)((top << 4) + bot);
-    }
-
-    if (view.obj != NULL) {
-       PyBuffer_Release(&view);
-    }
-    return _PyBytesWriter_Finish(&writer, buf);
-
-  error:
-    if (invalid_char == -1) {
-        PyErr_SetString(PyExc_ValueError,
-                        "fromhex() arg must contain an even number of hexadecimal digits");
-    } else {
-        PyErr_Format(PyExc_ValueError,
-                     "non-hexadecimal number found in "
-                     "fromhex() arg at position %zd", invalid_char);
-    }
-    _PyBytesWriter_Dealloc(&writer);
-
-  release_buffer:
-    if (view.obj != NULL) {
-        PyBuffer_Release(&view);
-    }
-    return NULL;
+    retval = PyBytes_FromStringAndSize(NULL, 1);
+    retbuf = PyBytes_AS_STRING(retval);
+    retbuf[0] = 0;
+    return retval;
 }
 
 /*[clinic input]

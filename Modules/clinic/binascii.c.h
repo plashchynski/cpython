@@ -550,28 +550,6 @@ PyDoc_STRVAR(binascii_a2b_hex__doc__,
 #define BINASCII_A2B_HEX_METHODDEF    \
     {"a2b_hex", (PyCFunction)binascii_a2b_hex, METH_O, binascii_a2b_hex__doc__},
 
-static PyObject *
-binascii_a2b_hex_impl(PyObject *module, Py_buffer *hexstr);
-
-static PyObject *
-binascii_a2b_hex(PyObject *module, PyObject *arg)
-{
-    PyObject *return_value = NULL;
-    Py_buffer hexstr = {NULL, NULL};
-
-    if (!ascii_buffer_converter(arg, &hexstr)) {
-        goto exit;
-    }
-    return_value = binascii_a2b_hex_impl(module, &hexstr);
-
-exit:
-    /* Cleanup for hexstr */
-    if (hexstr.obj)
-       PyBuffer_Release(&hexstr);
-
-    return return_value;
-}
-
 PyDoc_STRVAR(binascii_unhexlify__doc__,
 "unhexlify($module, hexstr, /)\n"
 "--\n"
@@ -582,28 +560,6 @@ PyDoc_STRVAR(binascii_unhexlify__doc__,
 
 #define BINASCII_UNHEXLIFY_METHODDEF    \
     {"unhexlify", (PyCFunction)binascii_unhexlify, METH_O, binascii_unhexlify__doc__},
-
-static PyObject *
-binascii_unhexlify_impl(PyObject *module, Py_buffer *hexstr);
-
-static PyObject *
-binascii_unhexlify(PyObject *module, PyObject *arg)
-{
-    PyObject *return_value = NULL;
-    Py_buffer hexstr = {NULL, NULL};
-
-    if (!ascii_buffer_converter(arg, &hexstr)) {
-        goto exit;
-    }
-    return_value = binascii_unhexlify_impl(module, &hexstr);
-
-exit:
-    /* Cleanup for hexstr */
-    if (hexstr.obj)
-       PyBuffer_Release(&hexstr);
-
-    return return_value;
-}
 
 PyDoc_STRVAR(binascii_a2b_qp__doc__,
 "a2b_qp($module, /, data, header=False)\n"
@@ -774,4 +730,4 @@ exit:
 
     return return_value;
 }
-/*[clinic end generated code: output=9ed7fbeec13c6606 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=69795d10ac13ccf2 input=a9049054013a1b77]*/
