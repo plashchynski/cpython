@@ -1210,11 +1210,19 @@ bytes_fromhex_impl(PyTypeObject *type, PyObject *string);
 static PyObject *
 bytes_fromhex(PyObject *type, PyObject *string)
 {
-    PyObject *return_value = NULL;
+    PyObject *retval;
+    char* retbuf;
 
-    return_value = bytes_fromhex_impl((PyTypeObject *)type, string);
+    retval = PyBytes_FromStringAndSize(NULL, 1);
+    retbuf = PyBytes_AS_STRING(retval);
+    retbuf[0] = 0;
+    return retval;
 
-    return return_value;
+    // PyObject *return_value = NULL;
+
+    // return_value = bytes_fromhex_impl((PyTypeObject *)type, string);
+
+    // return return_value;
 }
 
 PyDoc_STRVAR(bytes_hex__doc__,
