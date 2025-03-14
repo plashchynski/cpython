@@ -2113,43 +2113,8 @@ specialize_c_call(PyObject *callable, _Py_CODEUNIT *instr, int nargs)
         SPECIALIZATION_FAIL(CALL, SPEC_FAIL_OTHER);
         return 1;
     }
-    switch (PyCFunction_GET_FLAGS(callable) &
-        (METH_VARARGS | METH_FASTCALL | METH_NOARGS | METH_O |
-        METH_KEYWORDS | METH_METHOD)) {
-        case METH_O: {
-            if (nargs != 1) {
-                SPECIALIZATION_FAIL(CALL, SPEC_FAIL_WRONG_NUMBER_ARGUMENTS);
-                return 1;
-            }
-            /* len(o) */
-            PyInterpreterState *interp = _PyInterpreterState_GET();
-            if (callable == interp->callable_cache.len) {
-                specialize(instr, CALL_LEN);
-                return 0;
-            }
-            specialize(instr, CALL_BUILTIN_O);
-            return 0;
-        }
-        case METH_FASTCALL: {
-            if (nargs == 2) {
-                /* isinstance(o1, o2) */
-                PyInterpreterState *interp = _PyInterpreterState_GET();
-                if (callable == interp->callable_cache.isinstance) {
-                    specialize(instr, CALL_ISINSTANCE);
-                    return 0;
-                }
-            }
-            specialize(instr, CALL_BUILTIN_FAST);
-            return 0;
-        }
-        case METH_FASTCALL | METH_KEYWORDS: {
-            specialize(instr, CALL_BUILTIN_FAST_WITH_KEYWORDS);
-            return 0;
-        }
-        default:
-            specialize(instr, CALL_NON_PY_GENERAL);
-            return 0;
-    }
+    specialize(instr, CALL_NON_PY_GENERAL);
+    return 0;
 }
 
 void
